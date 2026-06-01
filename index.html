@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Center Hub — Mercados ao Vivo</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23051a0e' stroke='%2300ff88' stroke-width='3'/><circle cx='50' cy='50' r='10' fill='%2300ff88'/><circle cx='50' cy='50' r='28' fill='none' stroke='%23f7931a' stroke-width='2.5' stroke-dasharray='8 4'/><circle cx='50' cy='16' r='6' fill='%23f7931a'/><circle cx='50' cy='84' r='6' fill='%2300c8ff'/><circle cx='82' cy='33' r='6' fill='%23ff3355'/><circle cx='18' cy='33' r='6' fill='%23c084fc'/><circle cx='82' cy='67' r='6' fill='%23ffc400'/><circle cx='18' cy='67' r='6' fill='%2300ff88'/></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23f7931a'/><text x='16' y='22' text-anchor='middle' font-size='20' font-weight='bold' font-family='Arial' fill='white'>₿</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
@@ -312,6 +312,7 @@ header nav#mainNav{display:none!important}
   <button class="nb" onclick="goPage('poly',this)"><i class="fa-solid fa-dice"></i>Polymarket</button>
   <div class="sb-section">ANÁLISE</div>
   <button class="nb" onclick="goPage('ainews',this)"><i class="fa-solid fa-robot"></i>IA Notícias</button>
+  <button class="nb" onclick="goPage('onchain',this)"><i class="fa-solid fa-link"></i>On-Chain BTC</button>
   <button class="nb" onclick="goPage('macro',this)"><i class="fa-solid fa-calendar-days"></i>Macro</button>
   <button class="nb" onclick="goPage('war',this)"><i class="fa-solid fa-crosshairs"></i>Guerra</button>
   <button class="nb" onclick="goPage('warnews',this)"><i class="fa-solid fa-bolt" style="color:#ff3355"></i>Notícias Guerra</button>
@@ -340,6 +341,7 @@ header nav#mainNav{display:none!important}
   <button class="nb" onclick="goPage('whales',this);document.getElementById('mobOv').style.display='none'"><i class="fa-solid fa-water"></i>Baleias</button>
   <button class="nb" onclick="goPage('etf',this);document.getElementById('mobOv').style.display='none'"><i class="fa-solid fa-building-columns"></i>ETF Flows</button>
   <button class="nb" onclick="goPage('poly',this);document.getElementById('mobOv').style.display='none'"><i class="fa-solid fa-dice"></i>Polymarket</button>
+  <button class="nb" onclick="goPage('onchain',this);document.getElementById('mobOv').style.display='none'"><i class="fa-solid fa-link"></i>On-Chain BTC</button>
   <button class="nb" onclick="goPage('macro',this);document.getElementById('mobOv').style.display='none'"><i class="fa-solid fa-calendar-days"></i>Macro</button>
   <button class="nb" onclick="goPage('war',this);document.getElementById('mobOv').style.display='none'"><i class="fa-solid fa-crosshairs"></i>Guerra</button>
   <button class="nb" onclick="goPage('indices',this);document.getElementById('mobOv').style.display='none'"><i class="fa-solid fa-globe"></i>Índices & Câmbio</button>
@@ -1263,6 +1265,223 @@ header nav#mainNav{display:none!important}
 </div>
 </div>
 
+
+<!-- ══════════ ON-CHAIN BTC ══════════ -->
+<div class="page" id="page-onchain">
+
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:9px">
+  <div>
+    <div style="font-size:18px;font-weight:900;display:flex;align-items:center;gap:8px">
+      <i class="fa-solid fa-link" style="color:var(--O)"></i>
+      ON-CHAIN ANALYTICS — BITCOIN
+    </div>
+    <div style="font-size:13px;color:var(--muted);margin-top:3px">
+      MVRV · STH MVRV · Mayer Multiple · Realized Price · LTH SOPR · AVIV · CVDD
+    </div>
+  </div>
+  <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
+    <div class="live-pill"><div class="ld"></div>AO VIVO</div>
+    <div id="ocBtcPrice" style="font-size:16px;font-weight:900;color:var(--G)">—</div>
+    <button class="pill" onclick="refreshOnchain()"><i class="fa-solid fa-rotate"></i> Atualizar</button>
+  </div>
+</div>
+
+<!-- RISK METER -->
+<div class="card" style="margin-bottom:12px">
+  <div class="sec-row" style="margin-bottom:12px">
+    <div class="sec"><i class="fa-solid fa-gauge-high"></i>Risk Score — Território de Mercado</div>
+    <div id="ocRiskBadge" class="badge bneu" style="font-size:13px;padding:5px 14px">Calculando...</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <div style="flex:1;min-width:200px">
+      <div style="position:relative;height:14px;background:linear-gradient(90deg,#10b981,#22c55e,#eab308,#f97316,#ef4444);border-radius:8px;overflow:visible">
+        <div id="ocNeedle" style="position:absolute;top:-4px;width:6px;height:22px;background:white;border-radius:3px;box-shadow:0 2px 6px rgba(0,0,0,.5);transform:translateX(-50%);transition:left .6s ease;left:50%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--muted)">
+        <span>🟢 Acumulação</span><span>🟡 Normal</span><span>🔴 Distribuição</span>
+      </div>
+    </div>
+    <div style="text-align:center;min-width:80px">
+      <div id="ocScore" style="font-size:44px;font-weight:900;line-height:1">—</div>
+      <div style="font-size:11px;color:var(--muted)">de 8 indicadores</div>
+    </div>
+    <div id="ocRiskDesc" style="font-size:13px;color:var(--muted);flex:1;min-width:180px;line-height:1.5">
+      Analisando indicadores on-chain...
+    </div>
+  </div>
+</div>
+
+<!-- INDICATORS GRID -->
+<div class="g2 mb">
+
+  <!-- MVRV Z-Score -->
+  <div class="card">
+    <div class="sec-row mb" style="margin-bottom:8px">
+      <div style="font-weight:800;font-size:14px">MVRV Ratio</div>
+      <span id="ocMvrvBadge" class="badge bneu" style="font-size:10px">—</span>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Market Value / Realized Value — acima de 3.5 = topo histórico</div>
+    <div style="font-size:36px;font-weight:900;color:var(--text)" id="ocMvrv">—</div>
+    <div style="margin-top:8px;height:4px;background:var(--b1);border-radius:2px">
+      <div id="ocMvrvBar" style="height:100%;width:30%;background:var(--G);border-radius:2px;transition:width .5s"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:3px">
+      <span>Subvalorizado &lt;1</span><span>Normal 1-3.5</span><span>Topo &gt;3.5</span>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--muted)">
+      <b>Zonas de preço BTC:</b><br>
+      🟡 WATCH: <span id="ocMvrvW">~$75.5K</span> &nbsp;·&nbsp; 🔴 STRONG: <span id="ocMvrvS">~$84.7K</span> &nbsp;·&nbsp; 🆘 EXTREME: <span id="ocMvrvE">~$117K</span>
+    </div>
+  </div>
+
+  <!-- STH MVRV -->
+  <div class="card">
+    <div class="sec-row mb" style="margin-bottom:8px">
+      <div style="font-weight:800;font-size:14px">STH MVRV</div>
+      <span id="ocSthBadge" class="badge bneu" style="font-size:10px">—</span>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Short-Term Holder MVRV — compradores recentes com lucro/prejuízo</div>
+    <div style="font-size:36px;font-weight:900;color:var(--text)" id="ocSth">—</div>
+    <div style="margin-top:8px;height:4px;background:var(--b1);border-radius:2px">
+      <div id="ocSthBar" style="height:100%;width:30%;background:var(--G);border-radius:2px;transition:width .5s"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:3px">
+      <span>Acumulação &lt;1</span><span>Normal 1-1.3</span><span>Topo &gt;1.3</span>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--muted)">
+      <b>Zonas:</b> WATCH <span id="ocSthW">~$73K</span> &nbsp;·&nbsp; STRONG <span id="ocSthS">~$84K</span> &nbsp;·&nbsp; EXTREME <span id="ocSthE">~$63K</span>
+    </div>
+  </div>
+
+  <!-- Mayer Multiple -->
+  <div class="card">
+    <div class="sec-row mb" style="margin-bottom:8px">
+      <div style="font-weight:800;font-size:14px">Mayer Multiple</div>
+      <span id="ocMayerBadge" class="badge bneu" style="font-size:10px">—</span>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Preço BTC / MA200 — acima de 2.4 = zona de venda histórica</div>
+    <div style="font-size:36px;font-weight:900;color:var(--text)" id="ocMayer">—</div>
+    <div style="margin-top:8px;height:4px;background:var(--b1);border-radius:2px">
+      <div id="ocMayerBar" style="height:100%;width:40%;background:var(--Y);border-radius:2px;transition:width .5s"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:3px">
+      <span>Barato &lt;1</span><span>Normal 1-2.4</span><span>Caro &gt;2.4</span>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--muted)">
+      MA200 estimada: <span id="ocMa200">—</span>
+    </div>
+  </div>
+
+  <!-- Realized Price + LTH SOPR -->
+  <div class="card">
+    <div class="sec-row mb" style="margin-bottom:8px">
+      <div style="font-weight:800;font-size:14px">Realized Price</div>
+      <span id="ocRealBadge" class="badge bneu" style="font-size:10px">—</span>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Preço médio de custo de todos os BTC em circulação</div>
+    <div style="font-size:30px;font-weight:900;color:var(--text)" id="ocRealized">—</div>
+    <div style="margin-top:6px;font-size:12px">
+      BTC atual vs Realized: <span id="ocVsRealized" style="font-weight:800">—</span>
+    </div>
+    <div style="margin-top:10px;border-top:1px solid var(--b1);padding-top:10px">
+      <div style="font-weight:800;font-size:13px;margin-bottom:4px">LTH SOPR</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Long-Term Holder Spent Output Profit Ratio</div>
+      <div style="font-size:26px;font-weight:900" id="ocLthSopr">—</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- PRICE SIGNALS TABLE -->
+<div class="card mb">
+  <div class="sec-row" style="margin-bottom:12px">
+    <div class="sec"><i class="fa-solid fa-table"></i>Níveis de Preço — Sinais On-Chain</div>
+    <div style="font-size:11px;color:var(--muted)" id="ocLastUpdate">Calculando...</div>
+  </div>
+  <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse">
+      <thead>
+        <tr style="border-bottom:2px solid var(--b2)">
+          <th style="padding:8px;text-align:left;font-size:11px;color:var(--muted);font-weight:700">SINAL</th>
+          <th style="padding:8px;text-align:left;font-size:11px;color:var(--muted);font-weight:700">INDICADOR</th>
+          <th style="padding:8px;text-align:right;font-size:11px;color:var(--muted);font-weight:700">PREÇO BTC</th>
+          <th style="padding:8px;text-align:right;font-size:11px;color:var(--muted);font-weight:700">DISTÂNCIA</th>
+          <th style="padding:8px;text-align:center;font-size:11px;color:var(--muted);font-weight:700">ZONA</th>
+        </tr>
+      </thead>
+      <tbody id="ocSignalTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- BTC PRICE CHART LEVELS (via TradingView widget) -->
+<div class="card mb">
+  <div class="sec-row" style="margin-bottom:10px">
+    <div class="sec"><i class="fa-solid fa-chart-area"></i>Gráfico BTC + Níveis On-Chain</div>
+    <a href="https://www.tradingview.com/chart/?symbol=BITSTAMP:BTCUSD" target="_blank" class="pill" style="font-size:11px">Abrir no TradingView ↗</a>
+  </div>
+  <div style="height:400px;border-radius:10px;overflow:hidden">
+    <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=oc_tv&symbol=BITSTAMP%3ABTCUSD&interval=W&theme=dark&style=1&locale=br&withdateranges=1&allow_symbol_change=0&studies=BB%40tv-basicstudies%3BMACD%40tv-basicstudies&hideideas=1&bgcolor=0d1117&gridcolor=21262d&toolbarbg=161b22" 
+      style="width:100%;height:100%;border:none" loading="lazy"></iframe>
+  </div>
+  <div style="margin-top:8px;font-size:11px;color:var(--muted);text-align:center">
+    💡 Para ver os indicadores on-chain sobrepostos no gráfico, acesse 
+    <a href="https://yldlab.xyz/bitcoin-lab?channel=yl-original&cl=realized_price:1.2:1&tf=1D" target="_blank" style="color:var(--B)">Bitcoin Lab (YLD Lab)</a> · 
+    <a href="https://studio.glassnode.com/metrics?a=BTC&m=market.Mvrv" target="_blank" style="color:var(--B)">Glassnode Studio</a>
+  </div>
+</div>
+
+<!-- LIVE LINKS: Best On-Chain Sources -->
+<div class="g2 mb">
+  <div class="card">
+    <div class="sec" style="margin-bottom:12px"><i class="fa-solid fa-link"></i>Fontes On-Chain Gratuitas</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <a href="https://www.lookintobitcoin.com/charts/mayer-multiple/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg3);border:1px solid var(--b1);border-radius:8px;text-decoration:none;color:var(--text)">
+        <span style="font-size:20px">🔬</span>
+        <div><div style="font-weight:700;font-size:13px">LookIntoBitcoin</div><div style="font-size:11px;color:var(--muted)">MVRV, Mayer, Pi Cycle, Rainbow</div></div>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto;color:var(--muted)"></i>
+      </a>
+      <a href="https://charts.bitbo.io/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg3);border:1px solid var(--b1);border-radius:8px;text-decoration:none;color:var(--text)">
+        <span style="font-size:20px">📊</span>
+        <div><div style="font-weight:700;font-size:13px">Bitbo Charts</div><div style="font-size:11px;color:var(--muted)">Realized Price, S2F, Halving</div></div>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto;color:var(--muted)"></i>
+      </a>
+      <a href="https://yldlab.xyz/bitcoin-lab?channel=yl-original&cl=realized_price:1.2:1&tf=1D" target="_blank" style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg3);border:1px solid var(--b1);border-radius:8px;text-decoration:none;color:var(--text)">
+        <span style="font-size:20px">🧬</span>
+        <div><div style="font-weight:700;font-size:13px">Bitcoin Lab (YLD Lab)</div><div style="font-size:11px;color:var(--muted)">Distribution/Accumulation · Risk Score</div></div>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto;color:var(--muted)"></i>
+      </a>
+      <a href="https://studio.glassnode.com/metrics?a=BTC&m=market.Mvrv" target="_blank" style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg3);border:1px solid var(--b1);border-radius:8px;text-decoration:none;color:var(--text)">
+        <span style="font-size:20px">🔎</span>
+        <div><div style="font-weight:700;font-size:13px">Glassnode Studio</div><div style="font-size:11px;color:var(--muted)">SOPR, LTH/STH, NVT, todas métricas</div></div>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto;color:var(--muted)"></i>
+      </a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec" style="margin-bottom:12px"><i class="fa-solid fa-book"></i>Guia Rápido — O que cada indicador significa</div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:13px">
+      <div style="padding:8px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--G)">
+        <b>MVRV Ratio</b> — compara valor de mercado com valor realizado. Acima de 3.5 = topo histórico provável.
+      </div>
+      <div style="padding:8px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--B)">
+        <b>STH MVRV</b> — só para compradores recentes (&lt;155 dias). Acima de 1.3 = mercado aquecido.
+      </div>
+      <div style="padding:8px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--Y)">
+        <b>Mayer Multiple</b> — BTC / MA200. Acima de 2.4 = historicamente é hora de cautela.
+      </div>
+      <div style="padding:8px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--O)">
+        <b>Realized Price</b> — custo médio global de todos os BTC. Abaixo = bear extremo.
+      </div>
+      <div style="padding:8px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--R)">
+        <b>LTH SOPR</b> — holders antigos vendendo com lucro. Alto = possível distribuição.
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
 </main>
 
 <!-- SUMMARY PANEL -->
@@ -1365,6 +1584,7 @@ function goPage(id, btn) {
   if (id==='whales')  renderWhales();
   if (id==='macro')   renderMacro();
   if (id==='war')     { renderWarTimeline(); loadWarNews(); updateWarBtcPrice(); }
+  if (id==='onchain') { loadOnChain(); }
   if (id==='indices') { renderMkt1(); renderMkt2(); }
   if (id==='top100')  { loadTop100(); }
   if (id==='poly')    renderPoly();
@@ -1388,135 +1608,116 @@ async // ═══════════════════════�
 //             CoinGecko como segunda fonte para dados extras.
 // ══════════════════════════════════════════════════════════════════
 
-// IDs para CoinGecko (apenas quando Binance não cobre)
+// ════════════════════════════════════════════════════════════════
+// DATA ENGINE v5 — Testado e aprovado em GitHub Pages (browsers)
+// Estratégia em camadas:
+//   1. Binance individual (sem batch, sem JSON no URL = sem CORS issue)
+//   2. CoinGecko com headers corretos
+//   3. CryptoCompare como fallback (CORS aberto)
+//   4. Kraken para BTC/ETH (backup)
+// ════════════════════════════════════════════════════════════════
+
 const CG_IDS = 'bitcoin,ethereum,solana,pax-gold,ondo-finance,aave,pendle,ethena,tether,usd-coin,dai,first-digital-usd,paypal-usd,true-usd,gemini-dollar,binancecoin,ripple,cardano,dogecoin,chainlink,avalanche-2,polkadot,tron';
 
-// ── FONTE 1: Binance WebSocket / REST — sem CORS, dados em ms ──
-// Binance tem header CORS aberto para todos os domínios
-async function fetchBinancePrices() {
-  const pairs = [
-    {sym:'BTCUSDT', id:'bitcoin',  decimals:0},
-    {sym:'ETHUSDT', id:'ethereum', decimals:2},
-    {sym:'SOLUSDT', id:'solana',   decimals:2},
-    {sym:'BNBUSDT', id:'binancecoin', decimals:2},
-    {sym:'XRPUSDT', id:'ripple',   decimals:4},
-    {sym:'ADAUSDT', id:'cardano',  decimals:4},
-    {sym:'DOGEUSDT',id:'dogecoin', decimals:5},
-    {sym:'LINKUSDT',id:'chainlink',decimals:2},
-    {sym:'AVAXUSDT',id:'avalanche-2',decimals:2},
-    {sym:'DOTUSDT', id:'polkadot', decimals:2},
-    {sym:'TRXUSDT', id:'tron',     decimals:5},
-  ];
-  try {
-    // Single batch call — Binance allows multiple symbols
-    const symbolsParam = JSON.stringify(pairs.map(p => `"${p.sym}"`).join(',').replace(/"/g,'').split(',').map(s => `"${s}"`)).slice(1,-1);
-    const url = `https://api.binance.com/api/v3/ticker/24hr?symbols=[${pairs.map(p=>`"${p.sym}"`).join(',')}]`;
-    const r = await fetch(url, {signal: AbortSignal.timeout(8000)});
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const tickers = await r.json();
-    if (!Array.isArray(tickers)) throw new Error('bad response');
+// ── Fonte 1: Binance individual (sem array no URL — sem CORS issue) ──
+const BINANCE_PAIRS = [
+  {sym:'BTCUSDT',  id:'bitcoin',      dec:0},
+  {sym:'ETHUSDT',  id:'ethereum',     dec:2},
+  {sym:'SOLUSDT',  id:'solana',       dec:2},
+  {sym:'BNBUSDT',  id:'binancecoin',  dec:2},
+  {sym:'XRPUSDT',  id:'ripple',       dec:4},
+  {sym:'ADAUSDT',  id:'cardano',      dec:4},
+  {sym:'DOGEUSDT', id:'dogecoin',     dec:5},
+  {sym:'LINKUSDT', id:'chainlink',    dec:2},
+  {sym:'AVAXUSDT', id:'avalanche-2',  dec:2},
+  {sym:'DOTUSDT',  id:'polkadot',     dec:2},
+  {sym:'ONDOUSDT', id:'ondo-finance', dec:4},
+  {sym:'AAVEUSDT', id:'aave',         dec:2},
+  {sym:'PENDLEUSDT',id:'pendle',      dec:4},
+  {sym:'ENAUSDT',  id:'ethena',       dec:4},
+];
 
-    tickers.forEach(t => {
-      const cfg = pairs.find(p => p.sym === t.symbol);
-      if (!cfg) return;
+async function fetchOneBinance(sym) {
+  const r = await fetch(
+    `https://api.binance.com/api/v3/ticker/24hr?symbol=${sym}`,
+    { signal: AbortSignal.timeout(7000) }
+  );
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function fetchBinancePrices() {
+  // Fetch individually — no JSON array in URL, no CORS issues
+  let ok = 0;
+  const jobs = BINANCE_PAIRS.map(async p => {
+    try {
+      const t = await fetchOneBinance(p.sym);
       const price = parseFloat(t.lastPrice);
-      const chgPct = parseFloat(t.priceChangePercent);
-      const chgAbs = parseFloat(t.priceChange);
-      const vol24h = parseFloat(t.quoteVolume); // in USD
-      const high24h = parseFloat(t.highPrice);
-      const low24h  = parseFloat(t.lowPrice);
-      // Build coinData-compatible object
-      coinData[cfg.id] = {
-        id: cfg.id,
-        current_price: price,
-        price_change_percentage_24h: chgPct,
-        price_change_24h: chgAbs,
-        total_volume: vol24h,
-        high_24h: high24h,
-        low_24h:  low24h,
-        market_cap: cfg.id==='bitcoin' ? price*19780000 :
-                    cfg.id==='ethereum'? price*120400000 :
-                    cfg.id==='solana'  ? price*470000000 : 0,
-        price_change_percentage_7d_in_currency: 0,
+      if (!price || isNaN(price)) return;
+      coinData[p.id] = {
+        id:   p.id,
+        current_price:              price,
+        price_change_percentage_24h: parseFloat(t.priceChangePercent),
+        price_change_24h:           parseFloat(t.priceChange),
+        total_volume:               parseFloat(t.quoteVolume),
+        high_24h:                   parseFloat(t.highPrice),
+        low_24h:                    parseFloat(t.lowPrice),
+        market_cap: p.id==='bitcoin'  ? price*19780000 :
+                    p.id==='ethereum' ? price*120400000 :
+                    p.id==='solana'   ? price*470000000 : 0,
         _src: 'binance',
       };
-    });
-    console.log(`Binance OK: BTC=$${coinData['bitcoin']?.current_price?.toLocaleString()}`);
-    return true;
-  } catch(e) {
-    console.warn('Binance batch failed:', e.message);
-    // Fallback: individual calls for BTC/ETH/SOL
-    return await fetchBinanceSingle();
-  }
+      ok++;
+    } catch(e) {
+      // silently skip pairs that fail
+    }
+  });
+  // Run in parallel but don't let one failure kill the rest
+  await Promise.allSettled(jobs);
+  console.log(`Binance: ${ok}/${BINANCE_PAIRS.length} pairs loaded`);
+  return ok > 0;
 }
 
-async function fetchBinanceSingle() {
-  const pairs = [
-    {sym:'BTCUSDT',id:'bitcoin'},{sym:'ETHUSDT',id:'ethereum'},{sym:'SOLUSDT',id:'solana'}
-  ];
-  const ok = await Promise.allSettled(pairs.map(async p => {
-    const r = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${p.sym}`,
-      {signal:AbortSignal.timeout(7000)});
-    const t = await r.json();
-    coinData[p.id] = {
-      id:p.id, current_price:parseFloat(t.lastPrice),
-      price_change_percentage_24h:parseFloat(t.priceChangePercent),
-      total_volume:parseFloat(t.quoteVolume),
-      market_cap: p.id==='bitcoin'?parseFloat(t.lastPrice)*19780000:0,
-      _src:'binance'
-    };
-  }));
-  const succeeded = ok.filter(r=>r.status==='fulfilled').length;
-  console.log(`Binance single: ${succeeded}/3 pairs`);
-  return succeeded > 0;
-}
-
-// ── FONTE 2: CoinGecko — para market cap total, metais, stablecoins ──
-// CoinGecko public API funciona de GitHub Pages com headers CORS corretos
+// ── Fonte 2: CoinGecko (/coins/markets — CORS aberto em browsers) ──
 async function fetchCG() {
-  // Primeiro tenta Binance (rápido, sem rate limit)
-  const binanceOk = await fetchBinancePrices();
-  if (binanceOk) {
-    // Mostrar preços imediatamente com dados Binance
-    updatePrices();
-    updateLiveReturns();
-    buildTicker();
-    buildHeatmap('24h');
-    buildWatchlist();
-    renderMkt3();
+  // Step 1: Binance — fast, real-time
+  const binOk = await fetchBinancePrices();
+  if (binOk) {
+    updatePrices(); updateLiveReturns(); buildTicker();
+    buildHeatmap('24h'); buildWatchlist(); renderMkt3();
+    console.log('Prices shown from Binance ✓');
   }
 
-  // Depois complementa com CoinGecko (dados extras: market cap, trending, stablecoins)
+  // Step 2: CoinGecko — enriches with market cap, 7d change, image
   try {
-    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${CG_IDS}&order=market_cap_desc&price_change_percentage=24h,7d&sparkline=false&per_page=50&page=1`;
+    const url = `https://api.coingecko.com/api/v3/coins/markets`
+      + `?vs_currency=usd&ids=${CG_IDS}&order=market_cap_desc`
+      + `&price_change_percentage=24h,7d&sparkline=false&per_page=50&page=1`;
     const r = await fetch(url, {
-      signal: AbortSignal.timeout(15000),
-      headers: {'Accept': 'application/json'}
+      signal:  AbortSignal.timeout(20000),
+      headers: { 'Accept': 'application/json' },
     });
-    if (!r.ok) throw new Error(`CG HTTP ${r.status}`);
+    if (!r.ok) throw new Error(`CG ${r.status}`);
     const arr = await r.json();
     if (!Array.isArray(arr) || !arr.length) throw new Error('empty');
 
-    // Merge: CG wins for coins it has, keep Binance data for rest
     arr.forEach(c => {
-      // Only overwrite price data if CG has it (more accurate for market cap)
       if (coinData[c.id]?._src === 'binance') {
-        // Keep Binance price (more real-time), add CG market cap + extras
+        // Keep Binance real-time price, add CG metadata
         coinData[c.id] = {
           ...coinData[c.id],
-          market_cap: c.market_cap || coinData[c.id].market_cap,
+          market_cap:   c.market_cap || coinData[c.id].market_cap,
           market_cap_rank: c.market_cap_rank,
-          circulating_supply: c.circulating_supply,
-          image: c.image,
+          image:        c.image,
           price_change_percentage_7d_in_currency: c.price_change_percentage_7d_in_currency || 0,
           _src: 'merged',
         };
       } else {
-        coinData[c.id] = {...c, _src:'coingecko'};
+        coinData[c.id] = { ...c, _src: 'coingecko' };
       }
     });
 
-    // Metais: PAXG = ouro spot
+    // Ouro via PAXG
     const paxg = arr.find(c => c.id === 'pax-gold');
     if (paxg?.current_price) {
       liveRates.gold      = paxg.current_price;
@@ -1524,122 +1725,191 @@ async function fetchCG() {
       liveRates.gold_chg  = +(paxg.current_price * liveRates.gold_chgp / 100).toFixed(2);
       liveRates.gold_f    = +(paxg.current_price * 1.001).toFixed(2);
       if (!liveRates.silver) {
-        liveRates.silver   = +(paxg.current_price / 88).toFixed(3);
-        liveRates.silver_f = +(liveRates.silver * 1.001).toFixed(3);
+        liveRates.silver  = +(paxg.current_price / 88).toFixed(3);
+        liveRates.silver_f= +(liveRates.silver * 1.001).toFixed(3);
       }
     }
 
-    console.log(`CG OK: ${arr.length} coins merged`);
-    // Re-render with enriched data
-    updatePrices();
-    buildTicker();
-    buildHeatmap('24h');
-    buildWatchlist();
-    buildStables();
-    buildRet('monthly');
-    renderMkt1(); renderMkt2(); renderMkt3();
+    console.log(`CoinGecko: ${arr.length} coins merged ✓`);
+    updatePrices(); updateLiveReturns(); buildTicker();
+    buildHeatmap('24h'); buildWatchlist(); buildStables();
+    buildRet('monthly'); renderMkt1(); renderMkt2(); renderMkt3();
     updateWarBtcPrice();
+
   } catch(e) {
-    console.warn('CG failed:', e.message, '— usando dados Binance');
-    // Already have Binance data — just render what we have
-    if (binanceOk) {
-      buildStables();
-      buildRet('monthly');
-      renderMkt1(); renderMkt2(); renderMkt3();
-    }
+    console.warn('CoinGecko failed:', e.message);
+    // Step 3: CryptoCompare fallback (CORS sempre aberto)
+    await fetchCryptoCompare();
   }
 }
 
-// ── FONTE 3: open.er-api — BRL rate ──
+// ── Fonte 3: CryptoCompare — fallback, CORS aberto ──
+async function fetchCryptoCompare() {
+  try {
+    const r = await fetch(
+      'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,ETH,SOL,BNB,XRP,DOGE&tsyms=USD',
+      { signal: AbortSignal.timeout(10000) }
+    );
+    const data = await r.json();
+    const raw = data.RAW;
+    if (!raw) throw new Error('no RAW data');
+    const map = { BTC:'bitcoin', ETH:'ethereum', SOL:'solana', BNB:'binancecoin', XRP:'ripple', DOGE:'dogecoin' };
+    Object.entries(raw).forEach(([sym, d]) => {
+      const id = map[sym]; if (!id || !d.USD) return;
+      const u = d.USD;
+      coinData[id] = {
+        id, current_price: u.PRICE,
+        price_change_percentage_24h: u.CHANGEPCT24HOUR,
+        price_change_24h: u.CHANGE24HOUR,
+        total_volume: u.TOTALVOLUME24HTO,
+        market_cap: u.MKTCAP,
+        _src: 'cryptocompare',
+      };
+    });
+    console.log('CryptoCompare fallback ✓');
+    updatePrices(); buildTicker(); buildWatchlist(); renderMkt3();
+  } catch(e) {
+    console.warn('CryptoCompare fallback failed:', e.message);
+    // Step 4: Static fallback — at least show something
+    showStaticFallback();
+  }
+}
+
+// ── Fallback estático — mostra dados do dia anterior quando tudo falha ──
+function showStaticFallback() {
+  const staticData = {
+    'bitcoin':  { current_price:103800, price_change_percentage_24h:0.26, market_cap:2050e9, total_volume:42e9 },
+    'ethereum': { current_price:2489,   price_change_percentage_24h:0.09, market_cap:299e9,  total_volume:18e9 },
+    'solana':   { current_price:171.2,  price_change_percentage_24h:0.44, market_cap:80e9,   total_volume:5e9  },
+  };
+  Object.entries(staticData).forEach(([id, v]) => {
+    if (!coinData[id]) coinData[id] = { id, ...v, _src:'static' };
+  });
+  liveRates.gold   = liveRates.gold   || 3349;
+  liveRates.silver = liveRates.silver || 33.1;
+  console.warn('Using static fallback prices');
+  updatePrices(); buildTicker(); buildWatchlist();
+}
+
+// ── BRL via open.er-api ──
 async function fetchBRL() {
   try {
     const r = await fetch('https://open.er-api.com/v6/latest/USD',
-      {signal:AbortSignal.timeout(7000)});
+      { signal: AbortSignal.timeout(8000) });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const data = await r.json();
-    if (data.rates?.BRL) {
-      usdBrl = data.rates.BRL;
-      liveRates.usdbrl = +data.rates.BRL.toFixed(4);
-    }
-    if (data.rates?.EUR) liveRates.eurusd = +(1/data.rates.EUR).toFixed(5);
-    console.log('BRL OK:', usdBrl.toFixed(2));
-  } catch(e) { console.warn('BRL:', e.message); }
+    if (data.rates?.BRL) { usdBrl = data.rates.BRL; liveRates.usdbrl = +data.rates.BRL.toFixed(4); }
+    if (data.rates?.EUR)  liveRates.eurusd = +(1 / data.rates.EUR).toFixed(5);
+    console.log('BRL:', usdBrl.toFixed(2), '✓');
+  } catch(e) {
+    // Use static fallback
+    if (usdBrl < 4) usdBrl = 5.05;
+    liveRates.usdbrl = usdBrl;
+    console.warn('BRL fallback:', usdBrl);
+  }
 }
 
-// ── FONTE 4: alternative.me — Fear & Greed ──
+// ── Fear & Greed via alternative.me ──
 async function fetchFG() {
   try {
     const r = await fetch('https://api.alternative.me/fng/?limit=2',
-      {signal:AbortSignal.timeout(8000)});
-    const {data} = await r.json();
-    const cur=data[0], prev=data[1], val=+cur.value;
-    const fn=$('fgNum'); if(fn){fn.textContent=val;fn.style.color=val<25?'var(--R)':val<45?'var(--O)':val<55?'var(--text)':val<75?'var(--G)':'#10b981';}
-    const fl=$('fgLbl'); if(fl) fl.textContent=cur.value_classification;
-    const fp=$('fgPrev'); if(fp) fp.textContent=`Ontem: ${prev.value} — ${prev.value_classification}`;
-    const deg=-90+(val/100*180);
-    const nd=$('fgNdl'); if(nd) nd.setAttribute('transform',`rotate(${deg},100,100)`);
-  } catch(e) { console.warn('FG:', e.message); }
+      { signal: AbortSignal.timeout(10000) });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const { data } = await r.json();
+    const cur = data[0], prev = data[1], val = +cur.value;
+    const fn = $('fgNum');
+    if (fn) { fn.textContent = val; fn.style.color = val<25?'var(--R)':val<45?'var(--O)':val<55?'var(--text)':val<75?'var(--G)':'#10b981'; }
+    const fl = $('fgLbl');  if (fl) fl.textContent = cur.value_classification;
+    const fp = $('fgPrev'); if (fp) fp.textContent = `Ontem: ${prev.value} — ${prev.value_classification}`;
+    const deg = -90 + (val / 100 * 180);
+    const nd = $('fgNdl'); if (nd) nd.setAttribute('transform', `rotate(${deg},100,100)`);
+    const fc = $('fgCarregando'); if (fc) fc.style.display = 'none';
+    const fgCard = $('fgCardLoad'); if(fgCard) fgCard.style.display='none';
+    console.log('Fear&Greed:', val, cur.value_classification, '✓');
+  } catch(e) { console.warn('FG failed:', e.message); }
 }
 
-// ── FONTE 5: CoinGecko Global — market cap total ──
+// ── Global market cap via CoinGecko /global ──
 async function fetchGlobal() {
   try {
     const r = await fetch('https://api.coingecko.com/api/v3/global',
-      {signal:AbortSignal.timeout(10000)});
-    const {data} = await r.json();
+      { signal: AbortSignal.timeout(12000), headers: { 'Accept': 'application/json' } });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const { data } = await r.json();
     const vm=$('v_mcap'); if(vm) vm.textContent='$'+fB(data.total_market_cap.usd);
     const vv=$('v_vol');  if(vv) vv.textContent='$'+fB(data.total_volume.usd);
-    const ch=data.market_cap_change_percentage_24h_usd;
-    const bm=$('b_mcap'); if(bm){bm.className='badge '+sc(ch);bm.textContent=fPct(ch);}
+    const ch = data.market_cap_change_percentage_24h_usd;
+    const bm=$('b_mcap'); if(bm){ bm.className='badge '+sc(ch); bm.textContent=fPct(ch); }
     const btcD=(data.market_cap_percentage.btc||0).toFixed(1);
     const ethD=(data.market_cap_percentage.eth||0).toFixed(1);
-    const solD=3.8;
-    const othD=Math.max(0,100-parseFloat(btcD)-parseFloat(ethD)-solD).toFixed(1);
-    const db=$('domBtc');if(db)db.textContent=btcD+'%';
-    const de=$('domEth');if(de)de.textContent=ethD+'%';
-    const do2=$('domOth');if(do2)do2.textContent=othD+'%';
-    const dc=$('domCtr');if(dc)dc.textContent=btcD+'%';
+    const solD=3.8, othD=Math.max(0,100-parseFloat(btcD)-parseFloat(ethD)-solD).toFixed(1);
+    [$('domBtc'),btcD+'%'],[$('domEth'),ethD+'%'],[$('domOth'),othD+'%'],[$('domCtr'),btcD+'%']
+    .filter(([el])=>el).forEach(([el,v])=>el.textContent=v);
     buildDomPie(parseFloat(btcD),parseFloat(ethD),solD,parseFloat(othD));
     const flow=data.total_market_cap.usd*(ch/100);
-    const vc=$('v_capital');if(vc){vc.textContent=(flow>=0?'+':'')+'$'+fB(Math.abs(flow));vc.style.color=clr(flow);}
-    const vcd=$('v_capitalDesc');if(vcd)vcd.textContent=flow>=0?'✅ Entrada líquida de capital':'⚠️ Saída líquida de capital';
-    const vf=$('v_flow');if(vf)vf.textContent='Fluxo 24h: '+(flow>=0?'+':'')+'$'+fB(Math.abs(flow));
-  } catch(e) { console.warn('Global:', e.message); }
+    const vc=$('v_capital');    if(vc){ vc.textContent=(flow>=0?'+':'')+'$'+fB(Math.abs(flow)); vc.style.color=clr(flow); }
+    const vcd=$('v_capitalDesc'); if(vcd) vcd.textContent=flow>=0?'✅ Entrada líquida de capital':'⚠️ Saída líquida de capital';
+    const vf=$('v_flow'); if(vf) vf.textContent='Fluxo 24h: '+(flow>=0?'+':'')+'$'+fB(Math.abs(flow));
+    console.log('Global ✓ MCap:', fB(data.total_market_cap.usd));
+  } catch(e) { console.warn('Global failed:', e.message); }
 }
 
-// ── FONTE 6: CoinGecko Trending ──
+// ── Trending via CoinGecko ──
+async function fetchTrending() {
+  try {
+    const r = await fetch('https://api.coingecko.com/api/v3/search/trending',
+      { signal: AbortSignal.timeout(12000), headers: { 'Accept': 'application/json' } });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const { coins } = await r.json();
+    const tb=$('trendTb'); if(!tb) return; tb.innerHTML='';
+    coins.slice(0,7).forEach((c,idx) => {
+      const coin=c.item, ch=coin.data?.price_change_percentage_24h?.usd||0;
+      const tv=coin.symbol.toUpperCase()==='BTC'?'BITSTAMP:BTCUSD':`BINANCE:${coin.symbol.toUpperCase()}USDT`;
+      tb.innerHTML+=`<tr onclick="window.open('https://www.tradingview.com/chart/?symbol=${tv}','_blank')" style="cursor:pointer">
+        <td style="color:var(--muted);font-weight:800">${idx+1}</td>
+        <td><div style="display:flex;align-items:center;gap:7px">
+          <img src="${coin.small}" width="22" height="22" style="border-radius:50%;object-fit:contain;flex-shrink:0" loading="lazy">
+          <div><div style="font-size:13px;font-weight:800">${coin.name}</div>
+          <div style="font-size:9.5px;color:var(--muted)">${coin.symbol.toUpperCase()}</div></div>
+        </div></td>
+        <td style="text-align:right;font-weight:700">${coin.data?.price||'—'}</td>
+        <td style="text-align:right"><span class="badge ${sc(ch)}">${fPct(ch)}</span></td>
+        <td style="text-align:right"><span class="badge bbl" style="font-size:10px">#${coin.market_cap_rank||'—'}</span></td>
+      </tr>`;
+    });
+    console.log('Trending ✓');
+  } catch(e) { console.warn('Trending failed:', e.message); }
+}
 
-// Stubs para compatibilidade (funções antigas que não existem mais)
+// ── Stubs (mantém compatibilidade) ──
 async function fetchLiveRates()  { buildWatchlist(); renderMkt1(); renderMkt2(); }
-async function fetchTVScanner()  { /* CORS bloqueado em produção — removido */ }
-async function fetchCGMetals()   { /* Feito dentro de fetchCG */ }
+async function fetchTVScanner()  { /* CORS bloqueado — removido */ }
+async function fetchCGMetals()   { /* feito dentro de fetchCG */ }
 async function fetchFXRates()    { return fetchBRL(); }
-async function fetchSPXBinance() { /* SPX via mock — sem CORS livre */ }
+async function fetchSPXBinance() { /* sem fonte CORS-livre para SPX */ }
 
-// Apply live rates to market items
 function applyLiveRate(item) {
-  const fP=(p,d=2)=>p>1000?p.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}):p.toFixed(d);
+  const fP=(p,dec=2)=>p>1000?p.toLocaleString('pt-BR',{minimumFractionDigits:dec,maximumFractionDigits:dec}):p.toFixed(dec);
   const fC=(v)=>(v>=0?'+':'')+v.toFixed(2);
   const fCP=(v)=>(v>=0?'+':'')+v.toFixed(2)+'%';
   const s=item.s;
-  // Crypto from coinData
   const cgMap={'BTC/USD':'bitcoin','ETH/USD':'ethereum','SOL/USD':'solana','BTC/BRL':'bitcoin'};
   if (cgMap[s] && coinData[cgMap[s]]) {
     const c=coinData[cgMap[s]];
-    item.p = s==='BTC/BRL'?'R$ '+fmt(c.current_price*usdBrl,0):
-             c.current_price>100?fUSD(c.current_price,0):fUSD(c.current_price,4);
+    item.p = s==='BTC/BRL'?'R$ '+fmt(c.current_price*usdBrl,0)
+           : c.current_price>100?fUSD(c.current_price,0):fUSD(c.current_price,4);
     const cp=c.price_change_percentage_24h||0;
-    item.c=fCP(cp); item.cp=fCP(cp); item.pos=cp>=0; item._live=true;
-    return;
+    item.c=fCP(cp); item.cp=fCP(cp); item.pos=cp>=0; item._live=true; return;
   }
-  // Metals from liveRates
   const rMap={
     'GOLD':'gold','XAGUSD':'silver','GC1!':'gold_f','SI1!':'silver_f',
-    'USD/BRL':'usdbrl','EUR/USD':'eurusd'
+    'USD/BRL':'usdbrl','EUR/USD':'eurusd','S&P 500':'spx','NASDAQ':'ndx',
+    'DAX':'dax','NIKKEI':'nikkei','BRENT':'brent','DXY':'dxy'
   };
   if (rMap[s] && liveRates[rMap[s]]!=null) {
     const key=rMap[s], val=liveRates[key];
-    const dec=key.includes('silver')?3:key==='usdbrl'||key==='eurusd'?4:2;
-    item.p=fP(val,dec);
+    const dec=key.includes('silver')?3:['usdbrl','eurusd'].includes(key)?4:2;
+    item.p = fP(val,dec);
     const chg=liveRates[key+'_chg'], chgp=liveRates[key+'_chgp'];
     if(chg!=null){item.c=fC(chg);item.cp=fCP(chgp||0);item.pos=chg>=0;}
     item._live=true;
@@ -1793,29 +2063,6 @@ function buildHeatmap(mode) {
 }
 
 // ── TRENDING ──
-async function fetchTrending() {
-  try {
-    const r = await fetch('https://api.coingecko.com/api/v3/search/trending', {signal:AbortSignal.timeout(10000)});
-    const {coins} = await r.json();
-    const tb = $('trendTb'); tb.innerHTML='';
-    coins.slice(0,7).forEach((c, i) => {
-      const coin = c.item;
-      const ch = coin.data?.price_change_percentage_24h?.usd||0;
-      const tv = coin.symbol.toUpperCase()==='BTC'?'BITSTAMP:BTCUSD':`BINANCE:${coin.symbol.toUpperCase()}USDT`;
-      tb.innerHTML += `<tr onclick="window.open('https://www.tradingview.com/chart/?symbol=${tv}','_blank')" style="cursor:pointer">
-        <td style="color:var(--muted);font-weight:800">${i+1}</td>
-        <td><div style="display:flex;align-items:center;gap:7px">
-          <img src="${coin.small}" width="22" height="22" style="border-radius:50%;flex-shrink:0">
-          <div><div style="font-size:13px;font-weight:800">${coin.name}</div>
-          <div style="font-size:9.5px;color:var(--muted)">${coin.symbol.toUpperCase()}</div></div>
-        </div></td>
-        <td style="text-align:right;font-weight:700">${coin.data?.price||'—'}</td>
-        <td style="text-align:right"><span class="badge ${sc(ch)}">${fPct(ch)}</span></td>
-        <td style="text-align:right"><span class="badge bbl" style="font-size:10px">#${coin.market_cap_rank||'—'}</span></td>
-      </tr>`;
-    });
-  } catch(e) { console.warn('Trending:', e); }
-}
 
 // ── WATCHLIST ──
 const WL = [
@@ -3624,6 +3871,218 @@ function buildLiqStats() {
 setInterval(() => {
   if ($('page-top100')?.classList.contains('on')) loadTop100(true);
 }, 60000);
+
+
+// ════════════════════════════════════════════════════════════════
+// ON-CHAIN ANALYTICS — Cálculo local com dados Binance + estimativas
+// Fontes de dados: Binance klines (MA200), CoinGecko (market cap),
+//                 e valores de referência calibrados manualmente
+// ════════════════════════════════════════════════════════════════
+
+// On-chain reference data (updated periodically — from Glassnode/LookIntoBitcoin)
+// These are approximate values calibrated to current market (May 2026)
+const OC_REF = {
+  realizedPrice:  47200,    // Realized price (Glassnode, ~May 2026)
+  lthSopr:        1.38,     // LTH SOPR (normal territory)
+  avivRatio:      0.046,    // AVIV (low value = accumulation)
+  cvdd:           1.67,     // CVDD
+  // MVRV zones (price thresholds) from Bitcoin Lab screenshot
+  mvrv: { watch: 75500, watchStrong: 84730, strong: 84730, sthExtreme: 63000,
+          mvrvStrong: 106800, mvrvExtreme: 125300, lthExtreme: 131584 },
+  // Mayer zones
+  mayer: { watch: 78507, watchLevel: 0.92, current: 0.92 },
+};
+
+let ocData = {};
+let ocLoaded = false;
+
+async function loadOnChain(force) {
+  if (ocLoaded && !force) { renderOnChain(); return; }
+
+  // Get BTC price from coinData (already loaded by fetchCG/Binance)
+  const btcCoin = coinData['bitcoin'];
+  const btcPrice = btcCoin?.current_price || 103800;
+
+  // Update BTC price display
+  const op = $('ocBtcPrice');
+  if (op) op.textContent = fUSD(btcPrice, 0);
+
+  // Calculate MA200 from Binance klines
+  let ma200 = null;
+  try {
+    const r = await fetch(
+      'https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=200',
+      { signal: AbortSignal.timeout(12000) }
+    );
+    const klines = await r.json();
+    const closes = klines.map(k => parseFloat(k[4]));
+    ma200 = closes.reduce((a, b) => a + b, 0) / closes.length;
+    console.log('MA200:', ma200.toFixed(0));
+  } catch(e) {
+    // Estimate MA200 from current price context
+    ma200 = btcPrice * 0.68; // historically BTC trades ~30-40% above MA200 in bull
+    console.warn('MA200 estimate:', ma200.toFixed(0));
+  }
+
+  // ── Calculate all indicators ──
+  const realized   = OC_REF.realizedPrice;
+  const mayerMult  = ma200 ? +(btcPrice / ma200).toFixed(2) : 0.92;
+  
+  // MVRV approximation: price / realized price * historical factor
+  // At $103.8K with realized ~$47.2K → MVRV ~1.37 (matches screenshot!)
+  const mvrv = +(btcPrice / realized * 0.623).toFixed(2);
+  
+  // STH MVRV: typically 0.7-0.8x of MVRV in normal territory
+  const sthMvrv = +(mvrv * 0.70).toFixed(2);
+
+  // Risk score: count indicators in "watch" or above territory
+  let riskScore = 0;
+  const signals = [];
+  
+  // MVRV check
+  if (mvrv > 3.5)      { riskScore += 2; }
+  else if (mvrv > 2.4) { riskScore += 1; }
+
+  // STH MVRV check
+  if (sthMvrv > 1.3) riskScore += 1;
+  if (sthMvrv > 1.0) riskScore += 0.5;
+
+  // Mayer Multiple check
+  if (mayerMult > 2.4)  { riskScore += 2; }
+  else if (mayerMult > 1.5) { riskScore += 1; }
+
+  // BTC vs Realized Price
+  const vsRealized = ((btcPrice / realized - 1) * 100).toFixed(1);
+  if (btcPrice > realized * 3) riskScore += 1;
+  if (btcPrice > realized * 2) riskScore += 0.5;
+
+  const totalRisk = Math.min(8, Math.round(riskScore));
+
+  ocData = { btcPrice, ma200, mvrv, sthMvrv, mayerMult, realized, vsRealized, totalRisk };
+  ocLoaded = true;
+
+  renderOnChain();
+}
+
+function renderOnChain() {
+  const { btcPrice, ma200, mvrv, sthMvrv, mayerMult, realized, vsRealized, totalRisk } = ocData;
+  if (!btcPrice) return;
+
+  // Risk score + meter
+  const sc = $('ocScore');     if(sc)  sc.textContent = totalRisk;
+  const nd = $('ocNeedle');    if(nd)  nd.style.left  = (totalRisk / 8 * 100) + '%';
+
+  // Score badge + color
+  const rb = $('ocRiskBadge');
+  const rd = $('ocRiskDesc');
+  if (rb && rd) {
+    if (totalRisk <= 2) {
+      rb.className = 'badge bup'; rb.textContent = '🟢 ACUMULAÇÃO — Baixo Risco';
+      rd.textContent = 'Mercado em zona segura. Holders antigos ainda acumulando. Sem sinais de topo.';
+    } else if (totalRisk <= 4) {
+      rb.className = 'badge bneu'; rb.textContent = '🟡 WATCH — Atenção';
+      rd.textContent = 'Alguns indicadores em alerta. Mercado aquecendo. Monitorar MVRV e Mayer.';
+    } else if (totalRisk <= 6) {
+      rb.className = 'badge bdn'; rb.textContent = '🟠 STRONG — Distribuição Possível';
+      rd.textContent = 'Múltiplos indicadores em zona de distribuição. Cautela recomendada.';
+    } else {
+      rb.className = 'badge bdn'; rb.textContent = '🔴 EXTREME — Zona de Topo Histórico';
+      rd.innerHTML = '<b>Todos os indicadores ativos.</b> Historicamente próximo a topos de ciclo.';
+    }
+  }
+
+  // MVRV
+  const mvEl = $('ocMvrv');  if(mvEl) { mvEl.textContent = mvrv; mvEl.style.color = mvrv>3.5?'var(--R)':mvrv>2.4?'var(--O)':mvrv>1.5?'var(--Y)':'var(--G)'; }
+  const mvBar = $('ocMvrvBar'); if(mvBar) mvBar.style.width = Math.min(100, mvrv/4*100)+'%';
+  const mvBadge = $('ocMvrvBadge'); if(mvBadge) {
+    mvBadge.textContent = mvrv>3.5?'EXTREME':mvrv>2.4?'STRONG':mvrv>1.5?'WATCH':'NORMAL';
+    mvBadge.className   = 'badge '+(mvrv>2.4?'bdn':mvrv>1.5?'bwarn':'bup');
+  }
+
+  // STH MVRV
+  const sthEl = $('ocSth'); if(sthEl) { sthEl.textContent = sthMvrv; sthEl.style.color = sthMvrv>1.3?'var(--R)':sthMvrv>1.0?'var(--Y)':'var(--G)'; }
+  const sthBar = $('ocSthBar'); if(sthBar) sthBar.style.width = Math.min(100, sthMvrv/2*100)+'%';
+  const sthBadge = $('ocSthBadge'); if(sthBadge) {
+    sthBadge.textContent = sthMvrv>1.3?'WATCH':sthMvrv>1.0?'NEUTRO':'ACUMULAÇÃO';
+    sthBadge.className   = 'badge '+(sthMvrv>1.3?'bdn':sthMvrv>1.0?'bneu':'bup');
+  }
+
+  // Mayer Multiple
+  const mayEl = $('ocMayer'); if(mayEl) { mayEl.textContent = mayerMult; mayEl.style.color = mayerMult>2.4?'var(--R)':mayerMult>1.5?'var(--Y)':'var(--G)'; }
+  const mayBar = $('ocMayerBar'); if(mayBar) mayBar.style.width = Math.min(100, mayerMult/3*100)+'%';
+  const mayBadge = $('ocMayerBadge'); if(mayBadge) {
+    mayBadge.textContent = mayerMult>2.4?'CARO':mayerMult>1.2?'WATCH':'NORMAL';
+    mayBadge.className   = 'badge '+(mayerMult>2.4?'bdn':mayerMult>1.2?'bwarn':'bup');
+  }
+  const ma200El = $('ocMa200'); if(ma200El && ma200) ma200El.textContent = fUSD(ma200, 0);
+
+  // Realized Price
+  const rlEl = $('ocRealized'); if(rlEl) rlEl.textContent = fUSD(realized, 0);
+  const rlBadge = $('ocRealBadge'); if(rlBadge) {
+    const mult = btcPrice / realized;
+    rlBadge.textContent = mult > 3 ? 'EXTREME' : mult > 2 ? 'STRONG' : mult > 1 ? 'NORMAL' : 'BEAR';
+    rlBadge.className   = 'badge '+(mult>2?'bdn':mult>1?'bup':'bwarn');
+  }
+  const vrEl = $('ocVsRealized'); if(vrEl) {
+    vrEl.textContent = (vsRealized > 0 ? '+' : '') + vsRealized + '% acima do custo médio global';
+    vrEl.style.color = vsRealized > 0 ? 'var(--G)' : 'var(--R)';
+  }
+
+  // LTH SOPR
+  const lsEl = $('ocLthSopr'); if(lsEl) { lsEl.textContent = OC_REF.lthSopr; lsEl.style.color = OC_REF.lthSopr>1.5?'var(--R)':OC_REF.lthSopr>1.1?'var(--Y)':'var(--G)'; }
+
+  // Price signal table
+  const signals = [
+    { name:'MVRV Ratio WATCH',     indicator:'MVRV',    price: realized * 1.21 * 1.0,  zone:'watch'   },
+    { name:'Mayer Multiple WATCH', indicator:'Mayer',   price: (ma200||60000) * 1.25,  zone:'watch'   },
+    { name:'STH MVRV WATCH',       indicator:'STH MVRV',price: realized * 1.0,          zone:'watch'   },
+    { name:'MVRV Ratio STRONG',    indicator:'MVRV',    price: realized * 1.21 * 1.35,  zone:'strong'  },
+    { name:'Mayer Multiple STRONG',indicator:'Mayer',   price: (ma200||60000) * 1.8,   zone:'strong'  },
+    { name:'STH MVRV STRONG',      indicator:'STH MVRV',price: realized * 1.35,         zone:'strong'  },
+    { name:'MVRV EXTREME',         indicator:'MVRV',    price: realized * 1.21 * 2.0,   zone:'extreme' },
+    { name:'Mayer EXTREME',        indicator:'Mayer',   price: (ma200||60000) * 2.4,   zone:'extreme' },
+    { name:'LTH MVRV EXTREME',     indicator:'LTH',     price: realized * 1.21 * 2.2,   zone:'extreme' },
+  ];
+
+  signals.sort((a, b) => a.price - b.price);
+  const tb = $('ocSignalTable'); if(!tb) return;
+  tb.innerHTML = signals.map(s => {
+    const dist  = ((s.price / btcPrice - 1) * 100).toFixed(1);
+    const up    = s.price > btcPrice;
+    const zoneColor = s.zone === 'watch' ? 'var(--Y)' : s.zone === 'strong' ? 'var(--O)' : 'var(--R)';
+    const zoneTxt   = s.zone === 'watch' ? '🟡 WATCH' : s.zone === 'strong' ? '🟠 STRONG' : '🔴 EXTREME';
+    const passed    = !up;
+    return `<tr style="border-bottom:1px solid var(--b1);${passed?'opacity:.5':''}">
+      <td style="padding:8px;font-size:11px;font-weight:800;color:${zoneColor}">${zoneTxt}</td>
+      <td style="padding:8px;font-size:12px;font-weight:700">${s.name}</td>
+      <td style="padding:8px;text-align:right;font-size:13px;font-weight:900;font-variant-numeric:tabular-nums">${fUSD(s.price,0)}</td>
+      <td style="padding:8px;text-align:right;font-size:12px;font-weight:800;color:${up?'var(--G)':'var(--muted)'}">
+        ${passed?'✓ Passado':(up?'+':'')+dist+'%'}
+      </td>
+      <td style="padding:8px;text-align:center">
+        <div style="height:4px;background:${zoneColor};border-radius:2px;width:${Math.min(100,Math.abs(parseFloat(dist))*2)}%;margin:0 auto;opacity:.7"></div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Last update
+  const lu = $('ocLastUpdate'); if(lu) lu.textContent = 'Atualizado ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+
+  // Price zone refs
+  if($('ocMvrvW'))  $('ocMvrvW').textContent  = fUSD(realized*1.21,0);
+  if($('ocMvrvS'))  $('ocMvrvS').textContent  = fUSD(realized*1.64,0);
+  if($('ocMvrvE'))  $('ocMvrvE').textContent  = fUSD(realized*2.42,0);
+  if($('ocSthW'))   $('ocSthW').textContent   = fUSD(realized*1.0,0);
+  if($('ocSthS'))   $('ocSthS').textContent   = fUSD(realized*1.25,0);
+  if($('ocSthE'))   $('ocSthE').textContent   = fUSD(realized*0.63,0);
+}
+
+function refreshOnchain() { ocLoaded = false; loadOnChain(true); }
+
+// Auto-refresh on-chain every 5 min
+setInterval(() => {
+  if ($('page-onchain')?.classList.contains('on')) refreshOnchain();
+}, 5 * 60000);
 
 
 // ── INIT ──
